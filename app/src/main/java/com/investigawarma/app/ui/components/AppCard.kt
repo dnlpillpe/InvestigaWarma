@@ -19,7 +19,7 @@ fun AppCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     containerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.surface,
-    content: @Composable ColumnScopeContent,
+    content: ColumnScopeContent,
 ) {
     val base = modifier
         .fillMaxWidth()

@@ -1,5 +1,6 @@
 package com.investigawarma.app.ui.screens
 
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

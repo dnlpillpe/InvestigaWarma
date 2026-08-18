@@ -67,7 +67,7 @@ fun IrisAvatar(expression: IrisExpression, modifier: Modifier = Modifier.size(64
         when (expression) {
             IrisExpression.FELIZ, IrisExpression.CELEBRANDO -> {
                 mouthPath.moveTo(w * 0.4f, h * 0.52f)
-                mouthPath.quadraticTo(w * 0.5f, h * 0.6f, w * 0.6f, h * 0.52f)
+                mouthPath.quadraticBezierTo(w * 0.5f, h * 0.6f, w * 0.6f, h * 0.52f)
             }
             IrisExpression.SORPRENDIDA -> {
                 drawCircle(hair, radius = w * 0.04f, center = Offset(w * 0.5f, h * 0.54f))

@@ -1,5 +1,6 @@
 package com.investigawarma.app.ui.screens
 
+import androidx.compose.foundation.layout.width
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
