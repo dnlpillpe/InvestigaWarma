@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-   Solo se respalda la base de datos local del jugador (progreso, misiones, diario).
-   No hay datos personales identificables: el perfil usa alias, no nombre real.
--->
-<full-backup-content>
-    <include domain="database" path="investigawarma.db" />
-    <exclude domain="file" path="voice_journal/" />
-</full-backup-content>
+<data-extraction-rules>
+    <cloud-backup>
+    </cloud-backup>
+    <device-transfer>
+    </device-transfer>
+</data-extraction-rules>
