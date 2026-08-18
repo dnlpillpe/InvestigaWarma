@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta base InvestigaWarma: "academia futurista" - azul profundo + violeta + acento cian/ámbar -->
+    <color name="deep_space">#0F1B3C</color>
+    <color name="lab_violet">#5B3FE0</color>
+    <color name="discovery_cyan">#20D3C2</color>
+    <color name="spark_amber">#FFB020</color>
+    <color name="mission_coral">#FF6B6B</color>
+    <color name="paper_white">#F7F8FC</color>
+</resources>

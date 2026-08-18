@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Icono InvestigaWarma: "La lupa del joven investigador".
+  Lupa grande con una pequeña molécula/estrella de descubrimiento dentro,
+  mango de la lupa cruzando en diagonal, partículas de exploración alrededor.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Mango de la lupa -->
+    <path
+        android:strokeColor="#FFB020"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:pathData="M70,70 L86,86" />
+
+    <!-- Aro de la lupa -->
+    <path
+        android:strokeColor="#20D3C2"
+        android:strokeWidth="5"
+        android:pathData="M52,52 m-22,0 a22,22 0 1,0 44,0 a22,22 0 1,0 -44,0" />
+
+    <!-- Cristal de la lupa -->
+    <path
+        android:fillColor="#0F1B3C"
+        android:fillAlpha="0.55"
+        android:pathData="M52,52 m-19,0 a19,19 0 1,0 38,0 a19,19 0 1,0 -38,0" />
+
+    <!-- Estrella de descubrimiento dentro de la lupa -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,38 L55,48 L65,48 L57,54 L60,64 L52,58 L44,64 L47,54 L39,48 L49,48 Z" />
+
+    <!-- Molécula pequeña -->
+    <path
+        android:fillColor="#20D3C2"
+        android:pathData="M40,60 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+    <path
+        android:fillColor="#FF6B6B"
+        android:pathData="M64,60 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:pathData="M40,60 L64,60" />
+
+    <!-- Partículas de exploración -->
+    <path android:fillColor="#FFB020" android:pathData="M20,25 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+    <path android:fillColor="#20D3C2" android:pathData="M86,30 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0" />
+    <path android:fillColor="#FF6B6B" android:pathData="M88,55 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+</vector>

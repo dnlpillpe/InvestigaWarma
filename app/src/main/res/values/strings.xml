@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">InvestigaWarma</string>
+    <string name="app_tagline">Academia de Jóvenes Científicos</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">Bienvenido a la Academia</string>
+    <string name="onboarding_body_1">InvestigaWarma es una academia científica donde tú eres el investigador. Explora zonas, resuelve misiones y construye tu propio museo de descubrimientos.</string>
+    <string name="onboarding_title_2">Conoce a IRIS</string>
+    <string name="onboarding_body_2">IRIS es tu guía. Te acompaña en cada misión, celebra tus avances y te da pistas cuando las necesitas.</string>
+    <string name="onboarding_title_3">Piensa como científico</string>
+    <string name="onboarding_body_3">Observa, pregunta, crea hipótesis, experimenta y descubre. Cada misión sigue el método científico, paso a paso.</string>
+    <string name="onboarding_title_4">Tus datos, tu privacidad</string>
+    <string name="onboarding_body_4">No necesitas nombre real ni internet. Elige un alias y un avatar. Todo tu progreso se guarda solo en este dispositivo.</string>
+    <string name="onboarding_cta_next">Siguiente</string>
+    <string name="onboarding_cta_start">Comenzar</string>
+
+    <!-- Zonas -->
+    <string name="zone_1_name">Sala de Observación</string>
+    <string name="zone_2_name">Laboratorio Experimental</string>
+    <string name="zone_3_name">Biodescubrimiento</string>
+    <string name="zone_4_name">Planeta Tierra</string>
+    <string name="zone_5_name">Centro de Datos</string>
+    <string name="zone_6_name">Museo Científico</string>
+
+    <!-- Genérico -->
+    <string name="cd_avatar">Avatar del investigador</string>
+    <string name="cd_iris">IRIS, tu guía científica</string>
+    <string name="cd_lock">Bloqueado</string>
+    <string name="cd_star">Estrella</string>
+    <string name="cd_xp">Puntos de experiencia</string>
+    <string name="action_continue">Continuar</string>
+    <string name="action_retry">Intentar de nuevo</string>
+    <string name="action_back">Atrás</string>
+</resources>
