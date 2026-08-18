@@ -3,6 +3,7 @@
 
     <!-- Sin permiso INTERNET: la app es 100% offline, según especificación maestra. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature
         android:name="android.hardware.microphone"
