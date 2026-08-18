@@ -505,6 +505,17 @@ PREDICT_BANK = {
     "CENTRO_DE_DATOS": ["el valor seguirá subiendo", "el valor bajará", "el valor se mantendrá estable"],
 }
 
+# Frases cortas y variadas para los pasos de andamiaje (OBSERVE/QUESTION/ANALYZE/
+# DISCOVERY), elegidas de forma determinista por número de misión para que el
+# texto no se sienta calcado misión tras misión (app pensada para 8-12 años:
+# menos texto, más variedad). El paso OBSERVE además muestra una ilustración
+# propia (ver IllustrationCatalog en el código Kotlin), así que el texto puede
+# ser breve.
+OBSERVE_INTROS = ["¡Mira esto!", "Fíjate bien:", "IRIS descubrió algo:", "Ojo aquí:", "Algo curioso pasó:"]
+QUESTION_PROMPTS = ["¡Arma tu pregunta!", "¿Qué quieres saber?", "Elige tus palabras:", "Tu turno de preguntar:"]
+ANALYZE_PROMPTS = ["¿Qué descubriste?", "Cuenta lo que pasó:", "¿Tenías razón?", "Hora de pensar:"]
+DISCOVERY_PROMPTS = ["¡Lo lograste!", "¡Nuevo descubrimiento!", "¡Misión cumplida!", "¡Bien hecho, investigador!"]
+
 CHALLENGE_TYPE_BY_MECHANIC = {
     "CLASSIFY": "CLASSIFY",
     "ORDER_STEPS": "ORDER",
@@ -568,18 +579,24 @@ for m in missions:
     else:
         experiment_content = {"kind": "generic", "instructions": objective}
 
+    mission_number = int(mid[1:])
+    observe_intro = OBSERVE_INTROS[(mission_number - 1) % len(OBSERVE_INTROS)]
+    question_prompt = QUESTION_PROMPTS[(mission_number - 1) % len(QUESTION_PROMPTS)]
+    analyze_prompt = ANALYZE_PROMPTS[(mission_number - 1) % len(ANALYZE_PROMPTS)]
+    discovery_prompt = DISCOVERY_PROMPTS[(mission_number - 1) % len(DISCOVERY_PROMPTS)]
+
     steps = [
-        ("OBSERVE", f"Observa con atención: {story}",
+        ("OBSERVE", f"{observe_intro} {story}",
          {"focusHint": "Fíjate en los detalles antes de continuar."}),
-        ("QUESTION", "Construye tu pregunta científica con las tarjetas.",
+        ("QUESTION", question_prompt,
          {"connectors": ["¿Por qué?", "¿Qué pasa si?"], "topic": tags[0] if tags else "ciencia"}),
-        ("HYPOTHESIS", "Construye tu hipótesis: SI... ENTONCES... PORQUE...",
+        ("HYPOTHESIS", "SI... ENTONCES... PORQUE...",
          {"variableHint": tags[0] if tags else "variable",
           "resultHint": "resultado esperado", "explanationHint": "explicación científica"}),
         ("EXPERIMENT", objective, experiment_content),
-        ("ANALYZE", "Analiza tus resultados. ¿Confirman tu hipótesis?",
+        ("ANALYZE", analyze_prompt,
          {"question": "¿Qué descubriste al experimentar?"}),
-        ("DISCOVERY", "¡Desbloqueaste un nuevo descubrimiento científico!",
+        ("DISCOVERY", discovery_prompt,
          {"missionId": mid}),
     ]
     for order, (stype, prompt, content) in enumerate(steps, start=1):
