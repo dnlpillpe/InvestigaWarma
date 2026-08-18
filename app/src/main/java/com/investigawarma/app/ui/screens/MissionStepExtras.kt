@@ -1,5 +1,6 @@
 package com.investigawarma.app.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,11 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Checkbox
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,10 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.investigawarma.app.data.local.entity.ScientificMissionEntity
+import com.investigawarma.app.domain.model.Zone
 import com.investigawarma.app.ui.components.AppCard
+import com.investigawarma.app.ui.components.ExperimentLiveVisual
+import com.investigawarma.app.ui.components.IllustrationCatalog
 import com.investigawarma.app.ui.components.IrisExpression
 import com.investigawarma.app.ui.components.PrimaryButton
+import com.investigawarma.app.ui.components.SceneIllustration
 import com.investigawarma.app.ui.components.StarRow
 import com.investigawarma.app.ui.viewmodel.MissionUiState
 import com.investigawarma.app.ui.viewmodel.MissionViewModel
@@ -78,8 +86,15 @@ fun ExperimentStep(viewModel: MissionViewModel, state: MissionUiState) {
 @Composable
 private fun SimulatorContent(viewModel: MissionViewModel, state: MissionUiState) {
     AppCard {
-        Text("Ajusta las variables del experimento", style = MaterialTheme.typography.titleMedium)
+        Text("¡Mueve los controles!", style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(8.dp))
+        ExperimentLiveVisual(
+            experimentId = state.experimentContent?.experimentId,
+            parameters = state.experimentParameters,
+            values = state.experimentValues,
+            modifier = Modifier.fillMaxWidth().height(150.dp),
+        )
+        Spacer(Modifier.height(12.dp))
         state.experimentParameters.forEach { param ->
             val value = state.experimentValues[param.name] ?: param.defaultValue
             Text("${param.name} (${param.unit}): ${"%.1f".format(value)}", style = MaterialTheme.typography.bodyMedium)
@@ -106,25 +121,45 @@ private fun CompareContent(viewModel: MissionViewModel, state: MissionUiState) {
     var selected by remember { mutableStateOf(setOf<Int>()) }
 
     AppCard {
-        Text(content.prompt ?: "Marca las diferencias reales.", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
+        Text("👀 " + (content.prompt ?: "Marca las diferencias reales."), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(10.dp))
         statements.forEachIndexed { i, stmt ->
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = i in selected,
-                    enabled = !state.experimentCompleted,
-                    onCheckedChange = { checked ->
-                        selected = if (checked) selected + i else selected - i
-                    },
-                )
-                Text(stmt, style = MaterialTheme.typography.bodyMedium)
+            ToggleCard(text = stmt, checked = i in selected, enabled = !state.experimentCompleted) { checked ->
+                selected = if (checked) selected + i else selected - i
             }
+            Spacer(Modifier.height(8.dp))
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(4.dp))
         if (!state.experimentCompleted) {
             PrimaryButton(text = "Confirmar observación", onClick = { viewModel.submitCompareAnswer(selected) }, modifier = Modifier.fillMaxWidth())
         } else {
             Text(state.experimentResultSummary ?: "", style = MaterialTheme.typography.bodyLarge)
+        }
+    }
+}
+
+/** Tarjeta grande de selección múltiple, con marca visible en vez de un Checkbox diminuto. */
+@Composable
+private fun ToggleCard(text: String, checked: Boolean, enabled: Boolean, onToggle: (Boolean) -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = if (checked) Color(0xFF2ECC71).copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = enabled) { onToggle(!checked) },
+    ) {
+        Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Surface(
+                shape = RoundedCornerShape(50),
+                color = if (checked) Color(0xFF2ECC71) else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                modifier = Modifier.size(26.dp),
+            ) {
+                if (checked) {
+                    Text("✓", modifier = Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center, color = Color.White)
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            Text(text, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
         }
     }
 }
@@ -143,38 +178,33 @@ private fun DragDropContent(viewModel: MissionViewModel, state: MissionUiState) 
     val shuffledDefinitions = remember(pairs) { pairs.map { it.definition }.shuffled() }
 
     AppCard {
-        Text(content.prompt ?: "Empareja cada palabra con su definición.", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-        Text("1. Toca una palabra. 2. Toca su definición.", style = MaterialTheme.typography.bodySmall)
-        Spacer(Modifier.height(8.dp))
+        Text("🔗 " + (content.prompt ?: "Empareja cada palabra con su definición."), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("Toca una palabra y luego su definición.", style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(10.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
-            pairs.forEach { pair ->
+            pairs.forEachIndexed { i, pair ->
                 val isMatched = matches.containsKey(pair.label)
-                androidx.compose.material3.AssistChip(
-                    onClick = { if (!isMatched && !state.experimentCompleted) selectedLabel = pair.label },
-                    label = { Text(pair.label) },
-                    enabled = !isMatched && !state.experimentCompleted,
-                    modifier = Modifier.padding(end = 6.dp, bottom = 6.dp),
-                )
+                val isSelected = selectedLabel == pair.label
+                val color = TilePalette[i % TilePalette.size]
+                ChoiceChip(
+                    text = pair.label,
+                    selected = isSelected || isMatched,
+                    color = if (isMatched) Color(0xFF2ECC71) else color,
+                ) { if (!isMatched && !state.experimentCompleted) selectedLabel = pair.label }
+                Spacer(Modifier.width(8.dp))
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
         Column {
             shuffledDefinitions.forEach { def ->
                 val usedFor = matches.entries.firstOrNull { it.value == def }?.key
-                AppCard(
-                    onClick = {
-                        val label = selectedLabel
-                        if (label != null && usedFor == null && !state.experimentCompleted) {
-                            matches = matches + (label to def)
-                            selectedLabel = null
-                        }
-                    },
-                ) {
-                    Text(
-                        if (usedFor != null) "$usedFor → $def" else def,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                ToggleCard(text = if (usedFor != null) "$usedFor → $def" else def, checked = usedFor != null, enabled = !state.experimentCompleted) {
+                    val label = selectedLabel
+                    if (label != null && usedFor == null && !state.experimentCompleted) {
+                        matches = matches + (label to def)
+                        selectedLabel = null
+                    }
                 }
                 Spacer(Modifier.height(6.dp))
             }
@@ -200,19 +230,26 @@ private fun PredictContent(viewModel: MissionViewModel, state: MissionUiState) {
     var selected by remember { mutableStateOf<Int?>(null) }
 
     AppCard {
-        Text("¿Qué crees que pasará?", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
+        Text("🔮 ¿Qué crees que pasará?", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(10.dp))
         options.forEachIndexed { i, opt ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = selected == i,
-                    enabled = !state.experimentCompleted,
-                    onClick = { selected = i },
-                )
-                Text(opt, style = MaterialTheme.typography.bodyMedium)
+            val color = TilePalette[i % TilePalette.size]
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = if (selected == i) color.copy(alpha = 0.28f) else color.copy(alpha = 0.1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = !state.experimentCompleted) { selected = i },
+            ) {
+                Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                    LetterBadge((i + 1).toString(), color)
+                    Spacer(Modifier.width(12.dp))
+                    Text(opt, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                }
             }
+            Spacer(Modifier.height(8.dp))
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(4.dp))
         if (!state.experimentCompleted) {
             PrimaryButton(
                 text = "Predecir",
@@ -239,28 +276,47 @@ fun AnalyzeStep(promptText: String, viewModel: MissionViewModel, state: MissionU
         OutlinedTextField(
             value = note,
             onValueChange = { note = it; viewModel.updateAnalyzeNote(it) },
-            label = { Text("Escribe una conclusión (opcional, se guarda en tu diario)") },
+            label = { Text("Tu conclusión (opcional)") },
             modifier = Modifier.fillMaxWidth(),
         )
     }
 }
 
 @Composable
-fun DiscoveryPreview(promptText: String) {
-    AppCard { Text(promptText, style = MaterialTheme.typography.bodyLarge) }
+fun DiscoveryPreview(mission: ScientificMissionEntity, promptText: String) {
+    val tint = missionTint(mission)
+    AppCard {
+        SceneIllustration(
+            key = IllustrationCatalog.forMission(mission.id),
+            tint = tint,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp),
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(promptText, style = MaterialTheme.typography.bodyLarge)
+    }
 }
 
 @Composable
-fun DiscoveryCelebration(title: String, xp: Int, stars: Int, onContinue: () -> Unit) {
+fun DiscoveryCelebration(mission: ScientificMissionEntity, title: String, xp: Int, stars: Int, onContinue: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(Modifier.height(48.dp))
-        Text("¡Descubrimiento desbloqueado!", style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(24.dp))
+        Text("¡Lo descubriste! 🎉", style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(12.dp))
+        SceneIllustration(
+            key = IllustrationCatalog.forMission(mission.id),
+            tint = missionTint(mission),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp),
+        )
+        Spacer(Modifier.height(12.dp))
         Text(title, style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(16.dp))
         StarRow(count = stars, total = 3)
@@ -270,3 +326,8 @@ fun DiscoveryCelebration(title: String, xp: Int, stars: Int, onContinue: () -> U
         PrimaryButton(text = "Volver a la Academia", onClick = onContinue, modifier = Modifier.fillMaxWidth())
     }
 }
+
+@Composable
+private fun missionTint(mission: ScientificMissionEntity): Color =
+    runCatching { Zone.valueOf(mission.zone) }.getOrNull()?.let { zoneTint(it) }
+        ?: MaterialTheme.colorScheme.primary

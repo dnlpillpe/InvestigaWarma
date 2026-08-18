@@ -34,17 +34,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.investigawarma.app.data.local.entity.ScientificMissionEntity
 import com.investigawarma.app.domain.model.MissionStepType
+import com.investigawarma.app.domain.model.Zone
 import com.investigawarma.app.ui.components.AppCard
+import com.investigawarma.app.ui.components.IllustrationCatalog
 import com.investigawarma.app.ui.components.IrisExpression
 import com.investigawarma.app.ui.components.IrisMessageBubble
 import com.investigawarma.app.ui.components.PrimaryButton
+import com.investigawarma.app.ui.components.SceneIllustration
 import com.investigawarma.app.ui.components.SecondaryButton
 import com.investigawarma.app.ui.components.StarRow
+import com.investigawarma.app.ui.theme.ZoneBio
+import com.investigawarma.app.ui.theme.ZoneDatos
+import com.investigawarma.app.ui.theme.ZoneLaboratorio
+import com.investigawarma.app.ui.theme.ZoneMuseo
+import com.investigawarma.app.ui.theme.ZoneObservacion
+import com.investigawarma.app.ui.theme.ZonePlaneta
 import com.investigawarma.app.ui.viewmodel.MissionViewModel
 import com.investigawarma.app.ui.viewmodel.ViewModelFactory
+
+/** Color de acento por zona, usado para teñir las ilustraciones de misión. */
+fun zoneTint(zone: Zone): Color = when (zone) {
+    Zone.SALA_OBSERVACION -> ZoneObservacion
+    Zone.LABORATORIO_EXPERIMENTAL -> ZoneLaboratorio
+    Zone.BIODESCUBRIMIENTO -> ZoneBio
+    Zone.PLANETA_TIERRA -> ZonePlaneta
+    Zone.CENTRO_DE_DATOS -> ZoneDatos
+    Zone.MUSEO_CIENTIFICO -> ZoneMuseo
+}
 
 @Composable
 fun MissionScreen(
@@ -66,6 +87,7 @@ fun MissionScreen(
 
     if (state.missionCompleted) {
         DiscoveryCelebration(
+            mission = state.mission!!,
             title = state.mission?.title.orEmpty(),
             xp = state.xpAwarded,
             stars = state.starsAwarded,
@@ -91,12 +113,12 @@ fun MissionScreen(
             IrisMessageBubble(message = state.irisMessage, expression = IrisExpression.EXPLICANDO)
             Spacer(Modifier.height(12.dp))
             when (step?.stepType) {
-                MissionStepType.OBSERVE.name -> ObserveStep(promptText = step.promptText)
+                MissionStepType.OBSERVE.name -> ObserveStep(mission = state.mission!!, promptText = step.promptText)
                 MissionStepType.QUESTION.name -> QuestionStep(promptText = step.promptText, viewModel = viewModel, state = state)
                 MissionStepType.HYPOTHESIS.name -> HypothesisStep(viewModel = viewModel, state = state)
                 MissionStepType.EXPERIMENT.name -> ExperimentStep(viewModel = viewModel, state = state)
                 MissionStepType.ANALYZE.name -> AnalyzeStep(promptText = step.promptText, viewModel = viewModel, state = state)
-                MissionStepType.DISCOVERY.name -> DiscoveryPreview(promptText = step.promptText)
+                MissionStepType.DISCOVERY.name -> DiscoveryPreview(mission = state.mission!!, promptText = step.promptText)
                 else -> {}
             }
         }
@@ -145,8 +167,18 @@ private fun MissionNavBar(
 }
 
 @Composable
-private fun ObserveStep(promptText: String) {
+private fun ObserveStep(mission: ScientificMissionEntity, promptText: String) {
+    val tint = runCatching { Zone.valueOf(mission.zone) }.getOrNull()?.let { zoneTint(it) }
+        ?: MaterialTheme.colorScheme.primary
     AppCard {
+        SceneIllustration(
+            key = IllustrationCatalog.forMission(mission.id),
+            tint = tint,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp),
+        )
+        Spacer(Modifier.height(12.dp))
         Text(promptText, style = MaterialTheme.typography.bodyLarge)
     }
 }
@@ -164,7 +196,7 @@ private fun QuestionStep(
     AppCard {
         Text(promptText, style = MaterialTheme.typography.bodyLarge)
         Spacer(Modifier.height(12.dp))
-        Text("Elige un conector:", style = MaterialTheme.typography.labelLarge)
+        Text("Elige una:", style = MaterialTheme.typography.labelLarge)
         Row(modifier = Modifier.padding(top = 4.dp)) {
             connectors.forEach { c ->
                 Surface(
@@ -188,7 +220,7 @@ private fun QuestionStep(
         OutlinedTextField(
             value = text,
             onValueChange = { text = it; viewModel.updateQuestionDraft(connector, it) },
-            label = { Text("Completa tu pregunta científica") },
+            label = { Text("Tu pregunta") },
             modifier = Modifier.fillMaxWidth(),
         )
     }
