@@ -81,6 +81,8 @@ private fun DetectiveChallenge(dataJson: String, completed: Boolean, summary: St
     var selected by remember { mutableStateOf<Int?>(null) }
     AppCard {
         Text("🔍 Encuentra lo falso", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("Toca la tarjeta que NO es verdad.", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(10.dp))
         payload.statements.forEachIndexed { i, s ->
             EvidenceCard(text = s, letter = ('A' + i).toString(), selected = selected == i, enabled = !completed) { selected = i }
@@ -183,6 +185,8 @@ private fun PatternChallenge(dataJson: String, completed: Boolean, summary: Stri
     var answer by remember { mutableStateOf("") }
     AppCard {
         Text("🧩 ¿Qué número sigue?", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("Mira la serie y adivina el número que falta.", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             payload.sequence.forEach { n -> NumberTile(text = n.toString(), color = Color(0xFF20D3C2)) }
@@ -259,6 +263,8 @@ private fun ClassifyChallenge(dataJson: String, completed: Boolean, summary: Str
     val item = payload.items.getOrNull(index)
     AppCard {
         Text("📦 Clasifica · ${(index + 1).coerceAtMost(payload.items.size)} de ${payload.items.size}", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("Toca la categoría a la que pertenece.", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(10.dp))
         if (!completed && item != null) {
             BigChoiceCard(text = item.label, color = Color(0xFF8B75F0))

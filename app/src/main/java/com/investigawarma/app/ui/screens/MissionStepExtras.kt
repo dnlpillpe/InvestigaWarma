@@ -56,6 +56,8 @@ fun HypothesisStep(viewModel: MissionViewModel, state: MissionUiState) {
 
     AppCard {
         Text("🔮 ¿Qué crees que va a pasar?", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("Toca la opción que más sentido tenga para ti.", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(10.dp))
         if (!customMode) {
             guesses.forEach { guess ->
@@ -220,6 +222,8 @@ private fun CompareContent(viewModel: MissionViewModel, state: MissionUiState) {
 
     AppCard {
         Text("👀 " + (content.prompt ?: "Marca las diferencias reales."), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("Toca las tarjetas que creas ciertas.", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(10.dp))
         statements.forEachIndexed { i, stmt ->
             ToggleCard(text = stmt, checked = i in selected, enabled = !state.experimentCompleted) { checked ->
@@ -329,6 +333,8 @@ private fun PredictContent(viewModel: MissionViewModel, state: MissionUiState) {
 
     AppCard {
         Text("🔮 ¿Qué crees que pasará?", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("Elige la opción que más sentido tenga para ti.", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(10.dp))
         options.forEachIndexed { i, opt ->
             val color = TilePalette[i % TilePalette.size]

@@ -222,16 +222,25 @@ private fun ObserveStep(mission: ScientificMissionEntity, promptText: String) {
     }
 }
 
+/** Preguntas completas y con sentido propio (no se arman pegando una palabra clave). */
+private val QUESTION_TEMPLATES = listOf(
+    "¿Por qué crees que pasó esto?" to "¿Qué pasaría si lo intentas de nuevo?",
+    "¿Por qué pasará eso?" to "¿Qué crees que cambiaría si lo repites?",
+    "¿Por qué te parece que es así?" to "¿Qué pasaría si algo fuera distinto?",
+    "¿Por qué se comportará así?" to "¿Qué pasaría si sigues investigando?",
+)
+
 @Composable
 private fun QuestionStep(
     promptText: String,
     viewModel: MissionViewModel,
     state: com.investigawarma.app.ui.viewmodel.MissionUiState,
 ) {
-    val topic = state.mission?.tags?.firstOrNull() ?: "esto"
+    val missionNumber = state.mission?.id?.drop(1)?.toIntOrNull() ?: 1
+    val (why, whatIf) = QUESTION_TEMPLATES[(missionNumber - 1) % QUESTION_TEMPLATES.size]
     val templates = listOf(
-        "¿Por qué pasa esto con $topic?" to "¿Por qué?",
-        "¿Qué pasa si cambio $topic?" to "¿Qué pasa si?",
+        why to "¿Por qué?",
+        whatIf to "¿Qué pasa si?",
     )
     var customMode by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(state.questionText) }

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -136,20 +137,32 @@ fun SceneIllustration(
     tint: Color,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = tint.copy(alpha = 0.14f),
-        modifier = modifier,
-    ) {
-        Box(modifier = Modifier.padding(18.dp), contentAlignment = Alignment.Center) {
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .semantics { contentDescription = IllustrationCatalog.description(key) },
-            ) {
-                drawScene(key, tint)
+    Surface(shape = RoundedCornerShape(24.dp), color = Color.Transparent, modifier = modifier) {
+        Box(contentAlignment = Alignment.Center) {
+            sceneBackdrop(tint)
+            Box(modifier = Modifier.padding(18.dp), contentAlignment = Alignment.Center) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .semantics { contentDescription = IllustrationCatalog.description(key) },
+                ) {
+                    drawScene(key, tint)
+                }
             }
         }
+    }
+}
+
+/** Fondo con degradado suave + sombra de piso, para que las escenas se sientan con más profundidad. */
+@Composable
+private fun sceneBackdrop(tint: Color) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        drawRect(brush = Brush.verticalGradient(listOf(tint.copy(alpha = 0.28f), tint.copy(alpha = 0.06f))))
+        drawOval(
+            color = Color.Black.copy(alpha = 0.08f),
+            topLeft = Offset(size.width * 0.1f, size.height * 0.84f),
+            size = Size(size.width * 0.8f, size.height * 0.12f),
+        )
     }
 }
 
@@ -500,12 +513,10 @@ fun ExperimentLiveVisual(
         return ((value - param.minValue) / range).coerceIn(0f, 1f)
     }
 
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        color = Sky.copy(alpha = 0.12f),
-        modifier = modifier,
-    ) {
-        Box(modifier = Modifier.padding(18.dp), contentAlignment = Alignment.Center) {
+    Surface(shape = RoundedCornerShape(24.dp), color = Color.Transparent, modifier = modifier) {
+        Box(contentAlignment = Alignment.Center) {
+            sceneBackdrop(Sky)
+            Box(modifier = Modifier.padding(18.dp), contentAlignment = Alignment.Center) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val w = size.width
                 val h = size.height
@@ -546,6 +557,7 @@ fun ExperimentLiveVisual(
                         drawCircle(Ink.copy(alpha = 0.15f), radius = w * 0.2f, center = Offset(w * 0.5f, h * 0.5f))
                     }
                 }
+            }
             }
         }
     }
