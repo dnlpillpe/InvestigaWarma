@@ -58,12 +58,21 @@ private fun zoneColor(zone: Zone) = when (zone) {
 }
 
 private fun zoneLabel(zone: Zone) = when (zone) {
-    Zone.SALA_OBSERVACION -> "Sala de Observación"
-    Zone.LABORATORIO_EXPERIMENTAL -> "Laboratorio Experimental"
-    Zone.BIODESCUBRIMIENTO -> "Biodescubrimiento"
-    Zone.PLANETA_TIERRA -> "Planeta Tierra"
-    Zone.CENTRO_DE_DATOS -> "Centro de Datos"
+    Zone.SALA_OBSERVACION -> "Jardín de la Lupa"
+    Zone.LABORATORIO_EXPERIMENTAL -> "Taller de Inventos"
+    Zone.BIODESCUBRIMIENTO -> "Bosque y Costa Salvaje"
+    Zone.PLANETA_TIERRA -> "Expedición al Planeta"
+    Zone.CENTRO_DE_DATOS -> "Observatorio de Pistas"
     Zone.MUSEO_CIENTIFICO -> "Museo Científico"
+}
+
+private fun zoneTagline(zone: Zone) = when (zone) {
+    Zone.SALA_OBSERVACION -> "Tus primeros pasos como explorador"
+    Zone.LABORATORIO_EXPERIMENTAL -> "Arma y prueba tus propios inventos"
+    Zone.BIODESCUBRIMIENTO -> "Plantas, animales y criaturas por descubrir"
+    Zone.PLANETA_TIERRA -> "Clima, agua y tierra en movimiento"
+    Zone.CENTRO_DE_DATOS -> "Descifra pistas escondidas en los números"
+    Zone.MUSEO_CIENTIFICO -> ""
 }
 
 /**
@@ -98,7 +107,7 @@ fun HomeScreen(
                 XpBar(levelName = state.levelName, progressPercent = state.levelProgressPercent)
             }
             IconButton(onClick = onJournalClick) {
-                Icon(Icons.Filled.AutoStories, contentDescription = "Diario científico")
+                Icon(Icons.Filled.AutoStories, contentDescription = "Notas del explorador")
             }
             IconButton(onClick = onSettingsClick) {
                 Icon(Icons.Filled.Settings, contentDescription = "Ajustes")
@@ -106,7 +115,7 @@ fun HomeScreen(
         }
 
         IrisMessageBubble(
-            message = "¡Bienvenido de nuevo! ¿Qué zona quieres explorar hoy?",
+            message = "¡Qué bueno verte! ¿A dónde exploramos hoy?",
             expression = IrisExpression.FELIZ,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
@@ -156,10 +165,17 @@ private fun ZoneMapCard(
                 Text(zoneLabel(zone), style = MaterialTheme.typography.titleMedium)
                 if (zone != Zone.MUSEO_CIENTIFICO) {
                     Text(
-                        if (unlocked) "$completed de $total misiones completadas" else "Bloqueada",
-                        style = MaterialTheme.typography.bodyMedium,
+                        if (unlocked) zoneTagline(zone) else "Bloqueada",
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     )
+                    if (unlocked) {
+                        Text(
+                            "$completed de $total descubrimientos",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        )
+                    }
                 } else {
                     Text(
                         "Tus descubrimientos e insignias",

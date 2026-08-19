@@ -89,7 +89,7 @@ fun ZoneScreen(
                     }
                 }
             }
-            item { SectionHeader(title = "Misiones", subtitle = "Sigue el camino de investigación") }
+            item { SectionHeader(title = "Por explorar", subtitle = "Sigue el camino y descubre qué hay más adelante") }
             items(state.missions) { mwp ->
                 MissionRow(mwp, accentColor, onClick = { if (canPlay(mwp)) onMissionClick(mwp.mission.id) })
             }
@@ -114,11 +114,11 @@ private fun canPlay(mwp: MissionWithProgress): Boolean =
     mwp.progress?.status != "LOCKED"
 
 private fun zoneTitle(zone: Zone) = when (zone) {
-    Zone.SALA_OBSERVACION -> "Sala de Observación"
-    Zone.LABORATORIO_EXPERIMENTAL -> "Laboratorio Experimental"
-    Zone.BIODESCUBRIMIENTO -> "Biodescubrimiento"
-    Zone.PLANETA_TIERRA -> "Planeta Tierra"
-    Zone.CENTRO_DE_DATOS -> "Centro de Datos"
+    Zone.SALA_OBSERVACION -> "Jardín de la Lupa"
+    Zone.LABORATORIO_EXPERIMENTAL -> "Taller de Inventos"
+    Zone.BIODESCUBRIMIENTO -> "Bosque y Costa Salvaje"
+    Zone.PLANETA_TIERRA -> "Expedición al Planeta"
+    Zone.CENTRO_DE_DATOS -> "Observatorio de Pistas"
     Zone.MUSEO_CIENTIFICO -> "Museo Científico"
 }
 

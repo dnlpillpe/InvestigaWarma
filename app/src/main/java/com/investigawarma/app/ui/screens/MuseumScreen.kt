@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.investigawarma.app.ui.components.AppCard
+import com.investigawarma.app.ui.components.IllustrationKey
+import com.investigawarma.app.ui.components.SceneIllustration
 import com.investigawarma.app.ui.components.SectionHeader
 import com.investigawarma.app.ui.theme.SparkAmber
 import com.investigawarma.app.ui.viewmodel.MuseumViewModel
@@ -59,18 +61,29 @@ fun MuseumScreen(factory: ViewModelFactory, onBack: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
-                SectionHeader(title = "Colección", subtitle = "${items.count { it.unlockedAt != null }} de ${items.size} objetos")
+                SectionHeader(title = "Lo que descubrí", subtitle = "${items.count { it.unlockedAt != null }} de ${items.size} hallazgos")
             }
             items(items) { item ->
                 val unlocked = item.unlockedAt != null
+                val illustration = item.illustrationKey?.let { key -> runCatching { IllustrationKey.valueOf(key) }.getOrNull() }
                 AppCard {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            if (unlocked) Icons.Filled.EmojiEvents else Icons.Filled.Lock,
-                            contentDescription = if (unlocked) "Desbloqueado" else "Bloqueado",
-                            tint = if (unlocked) SparkAmber else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                    if (unlocked && illustration != null) {
+                        SceneIllustration(
+                            key = illustration,
+                            tint = SparkAmber,
+                            modifier = Modifier.fillMaxWidth().height(100.dp),
                         )
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (!(unlocked && illustration != null)) {
+                            Icon(
+                                if (unlocked) Icons.Filled.EmojiEvents else Icons.Filled.Lock,
+                                contentDescription = if (unlocked) "Desbloqueado" else "Bloqueado",
+                                tint = if (unlocked) SparkAmber else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                            )
+                            Spacer(Modifier.width(8.dp))
+                        }
                         Column {
                             Text(item.name, style = MaterialTheme.typography.titleMedium)
                             Text(

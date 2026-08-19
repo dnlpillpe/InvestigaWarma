@@ -48,7 +48,7 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * Diario científico: notas de texto y "diario hablado" (grabación real con
+ * Notas del Explorador: notas de texto y notas de voz (grabación real con
  * MediaRecorder, máx. 60s). Si el permiso de micrófono se deniega, se explica
  * brevemente y se ofrece la alternativa de texto; el resto de la app sigue funcional.
  */
@@ -70,7 +70,7 @@ fun JournalScreen(factory: ViewModelFactory, onBack: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás") }
-            Text("Diario Científico", style = MaterialTheme.typography.titleLarge)
+            Text("Notas del Explorador", style = MaterialTheme.typography.titleLarge)
         }
 
         LazyColumn(modifier = Modifier.weight(1f), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -96,7 +96,7 @@ fun JournalScreen(factory: ViewModelFactory, onBack: () -> Unit) {
 
             item {
                 AppCard {
-                    Text("Diario hablado", style = MaterialTheme.typography.titleMedium)
+                    Text("Nota de voz", style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.height(4.dp))
                     Text("Graba una observación de hasta 60 segundos.", style = MaterialTheme.typography.bodySmall)
                     Spacer(Modifier.height(8.dp))
@@ -133,7 +133,7 @@ fun JournalScreen(factory: ViewModelFactory, onBack: () -> Unit) {
             item { SectionHeader(title = "Tus entradas", subtitle = "${entries.size} registradas") }
 
             if (entries.isEmpty()) {
-                item { EmptyState(title = "Tu diario está vacío", message = "Completa misiones o graba una nota para empezar tu cuaderno.") }
+                item { EmptyState(title = "Todavía no hay notas", message = "Completa misiones o graba una nota para empezar tu cuaderno de explorador.") }
             }
 
             items(entries) { entry ->
