@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -166,20 +167,58 @@ private fun MissionNavBar(
     }
 }
 
+/** Tarjeta grande tocable para elegir una opción (pregunta, hipótesis, etc.). Compartida entre pasos. */
+@Composable
+fun OptionCard(text: String, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        color = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.22f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+    ) {
+        Text(text, modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
 @Composable
 private fun ObserveStep(mission: ScientificMissionEntity, promptText: String) {
     val tint = runCatching { Zone.valueOf(mission.zone) }.getOrNull()?.let { zoneTint(it) }
         ?: MaterialTheme.colorScheme.primary
+    var revealed by remember(mission.id) { mutableStateOf(false) }
     AppCard {
-        SceneIllustration(
-            key = IllustrationCatalog.forMission(mission.id),
-            tint = tint,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp),
-        )
+                .height(180.dp)
+                .clickable(enabled = !revealed) { revealed = true },
+        ) {
+            SceneIllustration(
+                key = IllustrationCatalog.forMission(mission.id),
+                tint = tint,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(if (revealed) 1f else 0.35f),
+            )
+            if (!revealed) {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(56.dp),
+                ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                        Text("👆", style = MaterialTheme.typography.headlineSmall)
+                    }
+                }
+            }
+        }
         Spacer(Modifier.height(12.dp))
-        Text(promptText, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            if (revealed) promptText else "Toca la escena para explorarla.",
+            style = MaterialTheme.typography.bodyLarge,
+        )
     }
 }
 
@@ -189,39 +228,34 @@ private fun QuestionStep(
     viewModel: MissionViewModel,
     state: com.investigawarma.app.ui.viewmodel.MissionUiState,
 ) {
-    val connectors = listOf("¿Por qué?", "¿Qué pasa si?")
-    var connector by remember { mutableStateOf(state.questionConnector ?: connectors.first()) }
+    val topic = state.mission?.tags?.firstOrNull() ?: "esto"
+    val templates = listOf(
+        "¿Por qué pasa esto con $topic?" to "¿Por qué?",
+        "¿Qué pasa si cambio $topic?" to "¿Qué pasa si?",
+    )
+    var customMode by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(state.questionText) }
 
     AppCard {
         Text(promptText, style = MaterialTheme.typography.bodyLarge)
         Spacer(Modifier.height(12.dp))
-        Text("Elige una:", style = MaterialTheme.typography.labelLarge)
-        Row(modifier = Modifier.padding(top = 4.dp)) {
-            connectors.forEach { c ->
-                Surface(
-                    shape = MaterialTheme.shapes.small,
-                    color = if (c == connector) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .then(Modifier),
-                ) {
-                    Text(
-                        c,
-                        modifier = Modifier
-                            .clickable { connector = c; viewModel.updateQuestionDraft(connector, text) }
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        color = if (c == connector) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                    )
+        if (!customMode) {
+            templates.forEach { (question, connector) ->
+                OptionCard(text = question, selected = state.questionText == question) {
+                    text = question
+                    viewModel.updateQuestionDraft(connector, question)
                 }
+                Spacer(Modifier.height(8.dp))
             }
+            Spacer(Modifier.height(4.dp))
+            SecondaryButton(text = "Escribir mi propia pregunta", onClick = { customMode = true }, modifier = Modifier.fillMaxWidth())
+        } else {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it; viewModel.updateQuestionDraft("¿Por qué?", it) },
+                label = { Text("Tu pregunta") },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
-        Spacer(Modifier.height(12.dp))
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it; viewModel.updateQuestionDraft(connector, it) },
-            label = { Text("Tu pregunta") },
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }

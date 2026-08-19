@@ -81,7 +81,7 @@ class MissionViewModel(
                         mission = mission,
                         steps = stepList.sortedBy { it.orderIndex },
                         isLoading = false,
-                        irisMessage = "¡Hola! Soy IRIS. Vamos a investigar juntos.",
+                        irisMessage = "¡Vamos! Encontré algo interesante por aquí. ¿Exploramos juntos?",
                     )
                     loadCurrentStepExtras()
                 }
@@ -207,6 +207,12 @@ class MissionViewModel(
         val success = ChallengeEvaluator.evaluateBuild(payload, selected)
         challengeRepository.recordAttempt(challenge.id, success, if (success) 1f else 0f)
         finishExperimentStep(if (success) 1f else 0.4f, if (success) "¡Elegiste los instrumentos correctos!" else "Faltan o sobran instrumentos.")
+    }
+
+    fun submitFindSpotAnswer(foundCount: Int, total: Int) {
+        val score = if (total <= 0) 1f else (foundCount.toFloat() / total).coerceIn(0f, 1f)
+        val message = if (score >= 0.99f) "¡Encontraste todo! Buen ojo de explorador." else "Encontraste $foundCount de $total. ¡Sigue mirando!"
+        finishExperimentStep(score, message)
     }
 
     private fun finishExperimentStep(score: Float, message: String) {
