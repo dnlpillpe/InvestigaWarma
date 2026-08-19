@@ -34,8 +34,13 @@ import com.investigawarma.app.data.local.entity.ScientificMissionEntity
 import com.investigawarma.app.data.local.entity.VoiceEntryEntity
 
 /**
- * Base de datos Room de InvestigaWarma. version = 1 (primera versión pública).
- * Toda la persistencia del jugador vive aquí; no hay backend ni sincronización remota.
+ * Base de datos Room de InvestigaWarma. Toda la persistencia del jugador vive
+ * aquí; no hay backend ni sincronización remota.
+ *
+ * version = 2: se agregó CollectionItemEntity.illustrationKey. No existen
+ * usuarios con datos reales todavía (sin Migration previas en el repo), así
+ * que se usa fallbackToDestructiveMigration() en vez de escribir una
+ * migración manual de una sola columna.
  */
 @Database(
     entities = [
@@ -55,7 +60,7 @@ import com.investigawarma.app.data.local.entity.VoiceEntryEntity
         ChallengeEntity::class,
         ChallengeAttemptEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -86,7 +91,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     DATABASE_NAME,
-                ).build().also { instance = it }
+                ).fallbackToDestructiveMigration().build().also { instance = it }
             }
     }
 }

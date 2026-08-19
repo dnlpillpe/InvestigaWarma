@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
  *  - "compare": prompt + statements + correctIndices (comparar observaciones)
  *  - "drag_drop": prompt + pairs (arrastrar etiqueta a definición)
  *  - "predict": scenario + options + correctIndex (predecir resultado)
+ *  - "find_spot": spots (tocar la escena ilustrada para encontrar detalles escondidos)
  *  - "generic": instructions (mecánicas sin interacción estructurada adicional)
  */
 @Serializable
@@ -25,10 +26,15 @@ data class MissionExperimentContent(
     val options: List<String>? = null,
     val correctIndex: Int? = null,
     val instructions: String? = null,
+    val spots: List<FindSpot>? = null,
 )
 
 @Serializable
 data class DragDropPair(val label: String, val definition: String)
+
+/** Punto escondido en una escena ilustrada, en coordenadas relativas (0f-1f) para "Busca y Descubre". */
+@Serializable
+data class FindSpot(val x: Float, val y: Float, val radius: Float = 0.1f)
 
 @Serializable
 data class QuestionStepContent(

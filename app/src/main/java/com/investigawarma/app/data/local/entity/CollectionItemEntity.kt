@@ -20,4 +20,6 @@ data class CollectionItemEntity(
     val category: String,
     val requirementDescription: String,
     val unlockedAt: Long? = null,
+    /** Clave de IllustrationKey (ver SceneIllustrations.kt) para mostrar una imagen real en el Museo. */
+    val illustrationKey: String? = null,
 )
