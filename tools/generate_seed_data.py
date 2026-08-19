@@ -510,11 +510,34 @@ PREDICT_BANK = {
 # texto no se sienta calcado misión tras misión (app pensada para 8-12 años:
 # menos texto, más variedad). El paso OBSERVE además muestra una ilustración
 # propia (ver IllustrationCatalog en el código Kotlin), así que el texto puede
-# ser breve.
-OBSERVE_INTROS = ["¡Mira esto!", "Fíjate bien:", "IRIS descubrió algo:", "Ojo aquí:", "Algo curioso pasó:"]
-QUESTION_PROMPTS = ["¡Arma tu pregunta!", "¿Qué quieres saber?", "Elige tus palabras:", "Tu turno de preguntar:"]
-ANALYZE_PROMPTS = ["¿Qué descubriste?", "Cuenta lo que pasó:", "¿Tenías razón?", "Hora de pensar:"]
-DISCOVERY_PROMPTS = ["¡Lo lograste!", "¡Nuevo descubrimiento!", "¡Misión cumplida!", "¡Bien hecho, investigador!"]
+# ser breve. IRIS habla como compañera exploradora, no como profesora dando
+# instrucciones.
+OBSERVE_INTROS = [
+    "Encontré algo raro por aquí:", "¡Mira lo que hallé!", "Ven a ver esto:",
+    "Algo llamó mi atención:", "¡Psst! Descubrí esto:",
+]
+QUESTION_PROMPTS = [
+    "¿Me ayudas a averiguarlo?", "¿Qué se te ocurre?", "Vamos a preguntarnos algo:",
+    "¿Tú qué te preguntas?",
+]
+ANALYZE_PROMPTS = [
+    "¿Qué encontramos?", "Cuéntame qué pasó:", "¿Acertamos?", "¿Qué aprendimos explorando?",
+]
+DISCOVERY_PROMPTS = [
+    "¡Lo encontramos!", "¡Nuevo hallazgo para el museo!", "¡Aventura cumplida!", "¡Gran descubrimiento, explorador!",
+]
+
+# "Busca y Descubre": misiones OBSERVE_COMPARE convertidas al minijuego táctil
+# nuevo (tocar la escena ilustrada para encontrar 2 detalles) en vez del checklist
+# pasivo de "compare". Coordenadas relativas (0-1) elegidas a mano para calzar
+# con el dibujo real de cada IllustrationKey (ver SceneIllustrations.kt).
+FIND_SPOT_COORDS = {
+    "m01": [(0.4, 0.42, 0.16), (0.72, 0.28, 0.12)],   # LUPA_DETALLE
+    "m04": [(0.3, 0.5, 0.16), (0.7, 0.5, 0.16)],       # MICROSCOPIO_MUESTRAS
+    "m18": [(0.32, 0.5, 0.16), (0.68, 0.5, 0.16)],     # HOJAS_COMPARAR
+    "m33": [(0.76, 0.6, 0.13), (0.36, 0.6, 0.13)],     # GRAFICO_BARRAS
+    "m34": [(0.22, 0.65, 0.14), (0.68, 0.65, 0.14)],   # COMPARAR_DATOS
+}
 
 CHALLENGE_TYPE_BY_MECHANIC = {
     "CLASSIFY": "CLASSIFY",
@@ -546,6 +569,11 @@ for m in missions:
     elif mechanic in CHALLENGE_TYPE_BY_MECHANIC:
         ctype = CHALLENGE_TYPE_BY_MECHANIC[mechanic]
         experiment_content = {"kind": "challenge", "challengeId": challenge_by_zone_and_type.get((zone, ctype))}
+    elif mechanic == "OBSERVE_COMPARE" and mid in FIND_SPOT_COORDS:
+        experiment_content = {
+            "kind": "find_spot",
+            "spots": [{"x": x, "y": y, "radius": r} for (x, y, r) in FIND_SPOT_COORDS[mid]],
+        }
     elif mechanic == "OBSERVE_COMPARE":
         criteria = COMPARE_BANK[zone]
         # Rotación determinista por misión: 2 de 4 criterios se marcan como diferencia real.
@@ -611,27 +639,30 @@ assert len(mission_steps) == 40 * 6, len(mission_steps)
 # 4. COLECCIONABLES (20) — Museo Científico Personal
 # ---------------------------------------------------------------------------
 
+# El sexto elemento es la IllustrationKey de Kotlin (SceneIllustrations.kt) que
+# mejor calza con el objeto, o None si no hay un dibujo propio todavía (el
+# Museo cae de vuelta al ícono normal en ese caso — sin inventar calces forzados).
 collection_items = [
-    ("lupa", "Lupa de investigador", "La primera herramienta de todo joven científico.", "INICIAL", "Completa tu primera misión."),
-    ("cuaderno", "Cuaderno científico", "Donde se registran todas las observaciones.", "INICIAL", "Escribe tu primera entrada de diario."),
-    ("regla", "Regla de medición", "Para medir con precisión cualquier descubrimiento.", "INICIAL", "Completa tu primer experimento."),
-    ("microscopio", "Microscopio básico", "Revela detalles invisibles a simple vista.", "INICIAL", "Completa la Sala de Observación."),
-    ("robot", "Robot ayudante", "Un pequeño robot que asiste en tareas repetitivas.", "INTERMEDIO", "Completa el Laboratorio Experimental."),
-    ("telescopio", "Telescopio de campo", "Para observar el cielo desde la Academia.", "INTERMEDIO", "Completa 3 misiones de Planeta Tierra."),
-    ("sensores", "Kit de sensores", "Mide temperatura, luz y humedad automáticamente.", "INTERMEDIO", "Completa 5 experimentos."),
-    ("brujula", "Brújula de explorador", "Nunca te pierdas en el Biodescubrimiento.", "INTERMEDIO", "Completa Biodescubrimiento."),
-    ("balanza", "Balanza de precisión", "Compara pesos con exactitud.", "INTERMEDIO", "Completa 3 desafíos de tipo Construir."),
-    ("termometro", "Termómetro de laboratorio", "Mide temperatura en todos tus experimentos.", "INTERMEDIO", "Completa 3 experimentos de temperatura."),
-    ("iman", "Imán de laboratorio", "Explora fuerzas invisibles.", "INTERMEDIO", "Completa 5 hipótesis válidas."),
-    ("prisma", "Prisma de luz", "Descompone la luz en colores.", "INTERMEDIO", "Completa el Centro de Datos."),
-    ("satelite", "Satélite miniatura", "Un modelo del satélite que orbita el planeta.", "AVANZADO", "Alcanza el nivel Científico en Formación."),
-    ("estacion_meteorologica", "Estación meteorológica", "Registra el clima de la Academia en tiempo real.", "AVANZADO", "Completa 6 misiones de Planeta Tierra."),
-    ("laboratorio_avanzado", "Laboratorio avanzado", "Un laboratorio completo para grandes descubrimientos.", "AVANZADO", "Completa 20 misiones en total."),
-    ("dron_exploracion", "Dron de exploración", "Sobrevuela zonas difíciles de alcanzar.", "AVANZADO", "Completa 10 desafíos con éxito."),
-    ("telescopio_espacial", "Telescopio espacial", "Observa más allá de lo que el ojo humano puede ver.", "AVANZADO", "Desbloquea 10 insignias."),
-    ("secuenciador", "Secuenciador genético", "Analiza el código de la vida.", "AVANZADO", "Completa Biodescubrimiento con puntuación perfecta."),
-    ("submarino", "Submarino de investigación", "Explora las profundidades desconocidas.", "AVANZADO", "Completa las 40 misiones."),
-    ("cohete", "Cohete de la Academia", "El símbolo máximo de un Gran Descubridor.", "AVANZADO", "Alcanza el nivel Gran Descubridor."),
+    ("lupa", "Lupa de investigador", "La primera herramienta de todo joven científico.", "INICIAL", "Completa tu primera misión.", "LUPA_DETALLE"),
+    ("cuaderno", "Cuaderno científico", "Donde se registran todas las observaciones.", "INICIAL", "Escribe tu primera entrada de diario.", "CUADERNO_NOTAS"),
+    ("regla", "Regla de medición", "Para medir con precisión cualquier descubrimiento.", "INICIAL", "Completa tu primer experimento.", "INSTRUMENTOS_LABORATORIO"),
+    ("microscopio", "Microscopio básico", "Revela detalles invisibles a simple vista.", "INICIAL", "Completa la Sala de Observación.", "MICROSCOPIO_MUESTRAS"),
+    ("robot", "Robot ayudante", "Un pequeño robot que asiste en tareas repetitivas.", "INTERMEDIO", "Completa el Laboratorio Experimental.", "METODO_CIENTIFICO_CICLO"),
+    ("telescopio", "Telescopio de campo", "Para observar el cielo desde la Academia.", "INTERMEDIO", "Completa 3 misiones de Planeta Tierra.", None),
+    ("sensores", "Kit de sensores", "Mide temperatura, luz y humedad automáticamente.", "INTERMEDIO", "Completa 5 experimentos.", None),
+    ("brujula", "Brújula de explorador", "Nunca te pierdas en el Biodescubrimiento.", "INTERMEDIO", "Completa Biodescubrimiento.", None),
+    ("balanza", "Balanza de precisión", "Compara pesos con exactitud.", "INTERMEDIO", "Completa 3 desafíos de tipo Construir.", "BALANZA_PESO"),
+    ("termometro", "Termómetro de laboratorio", "Mide temperatura en todos tus experimentos.", "INTERMEDIO", "Completa 3 experimentos de temperatura.", "TEMPERATURA_SUPERFICIES"),
+    ("iman", "Imán de laboratorio", "Explora fuerzas invisibles.", "INTERMEDIO", "Completa 5 hipótesis válidas.", None),
+    ("prisma", "Prisma de luz", "Descompone la luz en colores.", "INTERMEDIO", "Completa el Centro de Datos.", None),
+    ("satelite", "Satélite miniatura", "Un modelo del satélite que orbita el planeta.", "AVANZADO", "Alcanza el nivel Científico en Formación.", None),
+    ("estacion_meteorologica", "Estación meteorológica", "Registra el clima de la Academia en tiempo real.", "AVANZADO", "Completa 6 misiones de Planeta Tierra.", "CLIMA_ESTACIONES"),
+    ("laboratorio_avanzado", "Laboratorio avanzado", "Un laboratorio completo para grandes descubrimientos.", "AVANZADO", "Completa 20 misiones en total.", None),
+    ("dron_exploracion", "Dron de exploración", "Sobrevuela zonas difíciles de alcanzar.", "AVANZADO", "Completa 10 desafíos con éxito.", None),
+    ("telescopio_espacial", "Telescopio espacial", "Observa más allá de lo que el ojo humano puede ver.", "AVANZADO", "Desbloquea 10 insignias.", None),
+    ("secuenciador", "Secuenciador genético", "Analiza el código de la vida.", "AVANZADO", "Completa Biodescubrimiento con puntuación perfecta.", "CICLO_VIDA"),
+    ("submarino", "Submarino de investigación", "Explora las profundidades desconocidas.", "AVANZADO", "Completa las 40 misiones.", None),
+    ("cohete", "Cohete de la Academia", "El símbolo máximo de un Gran Descubridor.", "AVANZADO", "Alcanza el nivel Gran Descubridor.", None),
 ]
 assert len(collection_items) == 20
 
@@ -774,11 +805,13 @@ def write_collection_items():
     lines = [HEADER,
              "import com.investigawarma.app.data.local.entity.CollectionItemEntity",
              "", "object SeedCollectionItems {", "    val ALL: List<CollectionItemEntity> = listOf("]
-    for key, name, desc, cat, req in collection_items:
+    for key, name, desc, cat, req, illustration in collection_items:
+        illustration_kt = "null" if illustration is None else f"{kstr(illustration)}"
         lines.append(
             "        CollectionItemEntity("
             f'id = {kstr("col_" + key)}, key = {kstr(key)}, name = {kstr(name)}, '
-            f'description = {kstr(desc)}, category = {kstr(cat)}, requirementDescription = {kstr(req)}),'
+            f'description = {kstr(desc)}, category = {kstr(cat)}, requirementDescription = {kstr(req)}, '
+            f'illustrationKey = {illustration_kt}),'
         )
     lines.append("    )")
     lines.append("}")
@@ -881,10 +914,11 @@ def write_sample_sql():
 
     lines.append("")
     lines.append("-- Coleccionables (completo: 20)")
-    for key, name, desc, cat, req in collection_items:
+    for key, name, desc, cat, req, illustration in collection_items:
+        illustration_sql = "NULL" if illustration is None else sql_str(illustration)
         lines.append(
-            "INSERT INTO collection_item (id, key, name, description, category, requirementDescription) VALUES "
-            f"({sql_str('col_' + key)}, {sql_str(key)}, {sql_str(name)}, {sql_str(desc)}, {sql_str(cat)}, {sql_str(req)});"
+            "INSERT INTO collection_item (id, key, name, description, category, requirementDescription, illustrationKey) VALUES "
+            f"({sql_str('col_' + key)}, {sql_str(key)}, {sql_str(name)}, {sql_str(desc)}, {sql_str(cat)}, {sql_str(req)}, {illustration_sql});"
         )
 
     lines.append("")

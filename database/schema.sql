@@ -107,7 +107,8 @@ CREATE TABLE IF NOT EXISTS collection_item (
     description TEXT NOT NULL,
     category TEXT NOT NULL,
     requirementDescription TEXT NOT NULL,
-    unlockedAt INTEGER
+    unlockedAt INTEGER,
+    illustrationKey TEXT
 );
 CREATE UNIQUE INDEX IF NOT EXISTS index_collection_item_key ON collection_item(key);
 CREATE INDEX IF NOT EXISTS index_collection_item_category ON collection_item(category);
