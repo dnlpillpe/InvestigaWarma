@@ -77,16 +77,28 @@ class MissionViewModel(
             val steps = missionRepository.observeSteps(missionId)
             steps.collect { stepList ->
                 if (_uiState.value.mission == null) {
+                    val sorted = stepList.sortedBy { it.orderIndex }
                     _uiState.value = MissionUiState(
                         mission = mission,
-                        steps = stepList.sortedBy { it.orderIndex },
+                        steps = sorted,
                         isLoading = false,
-                        irisMessage = "¡Vamos! Encontré algo interesante por aquí. ¿Exploramos juntos?",
+                        irisMessage = irisMessageForStep(sorted.firstOrNull()?.stepType),
                     )
                     loadCurrentStepExtras()
                 }
             }
         }
+    }
+
+    /** Lo que dice IRIS en cada paso: instrucción concreta de qué hacer, no una frase decorativa. */
+    private fun irisMessageForStep(stepType: String?): String = when (stepType) {
+        MissionStepType.OBSERVE.name -> "Encontré una pista. Tócala para verla bien 🔍"
+        MissionStepType.QUESTION.name -> "¿Qué sospechas? Elige la que más sentido te haga."
+        MissionStepType.HYPOTHESIS.name -> "Sigue tu corazonada: toca lo que crees que pasó."
+        MissionStepType.EXPERIMENT.name -> "¡Hora de investigar! Resuelve esto para seguir con el caso."
+        MissionStepType.ANALYZE.name -> "Cuéntame qué descubriste, detective."
+        MissionStepType.DISCOVERY.name -> "¡Caso resuelto! Mira lo que encontramos."
+        else -> "Vamos a resolver este caso juntos."
     }
 
     private fun currentStep(): MissionStepEntity? =
@@ -166,7 +178,7 @@ class MissionViewModel(
         val content = _uiState.value.experimentContent ?: return
         val correct = content.correctIndex ?: return
         val score = if (selectedIndex == correct) 1f else 0.3f
-        finishExperimentStep(score, if (score == 1f) "¡Tu predicción fue correcta!" else "No era lo que esperabas, pero así aprende un investigador.")
+        finishExperimentStep(score, if (score == 1f) "¡Tu corazonada fue correcta!" else "No era eso, pero todo buen detective se equivoca antes de acertar.")
     }
 
     fun submitDetectiveAnswer(chosenIndex: Int) = viewModelScope.launch {
@@ -269,7 +281,11 @@ class MissionViewModel(
     fun goToNextStep() {
         val state = _uiState.value
         if (state.stepIndex < state.steps.size - 1) {
-            _uiState.value = state.copy(stepIndex = state.stepIndex + 1)
+            val newIndex = state.stepIndex + 1
+            _uiState.value = state.copy(
+                stepIndex = newIndex,
+                irisMessage = irisMessageForStep(state.steps.getOrNull(newIndex)?.stepType),
+            )
             loadCurrentStepExtras()
         } else {
             completeMission()
@@ -279,7 +295,11 @@ class MissionViewModel(
     fun goToPreviousStep() {
         val state = _uiState.value
         if (state.stepIndex > 0) {
-            _uiState.value = state.copy(stepIndex = state.stepIndex - 1)
+            val newIndex = state.stepIndex - 1
+            _uiState.value = state.copy(
+                stepIndex = newIndex,
+                irisMessage = irisMessageForStep(state.steps.getOrNull(newIndex)?.stepType),
+            )
         }
     }
 

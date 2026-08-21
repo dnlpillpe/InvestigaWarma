@@ -55,9 +55,9 @@ fun HypothesisStep(viewModel: MissionViewModel, state: MissionUiState) {
     val guesses = listOf("Va a cambiar mucho", "Casi no va a cambiar")
 
     AppCard {
-        Text("🔮 ¿Qué crees que va a pasar?", style = MaterialTheme.typography.titleMedium)
+        Text("🕵️ ¿Cuál es tu corazonada?", style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(4.dp))
-        Text("Toca la opción que más sentido tenga para ti.", style = MaterialTheme.typography.bodySmall)
+        Text("No hay respuestas malas: toca la que más sentido tenga para ti.", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(10.dp))
         if (!customMode) {
             guesses.forEach { guess ->
@@ -411,7 +411,7 @@ fun DiscoveryCelebration(mission: ScientificMissionEntity, title: String, xp: In
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.height(24.dp))
-        Text("¡Lo descubriste! 🎉", style = MaterialTheme.typography.headlineMedium)
+        Text("¡Caso resuelto! 🎉", style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(12.dp))
         SceneIllustration(
             key = IllustrationCatalog.forMission(mission.id),
@@ -423,7 +423,7 @@ fun DiscoveryCelebration(mission: ScientificMissionEntity, title: String, xp: In
         Spacer(Modifier.height(12.dp))
         Text(title, style = MaterialTheme.typography.titleLarge)
         Text(
-            "🏛️ Se guardó en tu Museo",
+            "🗂️ Se guardó en tu Archivo de Casos",
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.tertiary,
         )
@@ -432,7 +432,7 @@ fun DiscoveryCelebration(mission: ScientificMissionEntity, title: String, xp: In
         Spacer(Modifier.height(8.dp))
         Text("+$xp XP", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.tertiary)
         Spacer(Modifier.height(32.dp))
-        PrimaryButton(text = "Volver a la Academia", onClick = onContinue, modifier = Modifier.fillMaxWidth())
+        PrimaryButton(text = "Volver a la Agencia", onClick = onContinue, modifier = Modifier.fillMaxWidth())
     }
 }
 

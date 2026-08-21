@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -41,8 +42,9 @@ import com.investigawarma.app.ui.viewmodel.OnboardingViewModel
 import com.investigawarma.app.ui.viewmodel.ViewModelFactory
 
 /**
- * Onboarding de 4 pantallas: presentación, personaje guía, cómo funciona el
- * método científico, y privacidad + creación de perfil (alias + avatar).
+ * Onboarding de 4 pantallas: presentación (agencia de casos), personaje guía,
+ * cómo se juega un caso paso a paso (instrucciones concretas, no el nombre del
+ * método científico), y privacidad + creación de perfil (alias + avatar).
  * No exige nombre real ni ningún dato personal identificable.
  */
 @Composable
@@ -113,10 +115,10 @@ private fun OnboardingPageIntro() {
     ) {
         MagnifierLogo(modifier = Modifier.size(120.dp))
         Spacer(Modifier.height(24.dp))
-        Text("Bienvenido a la Academia", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
+        Text("Bienvenido a la Agencia de Casos", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
         Spacer(Modifier.height(12.dp))
         Text(
-            "InvestigaWarma es una academia científica donde tú eres el investigador. Explora zonas, resuelve misiones y construye tu propio museo de descubrimientos.",
+            "Tú y IRIS son un equipo de detectives. Cada zona esconde casos curiosos: ¿por qué esta planta creció rara? ¿qué se esconde en el bosque? Toca, adivina y resuelve para descubrirlo.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
@@ -135,7 +137,7 @@ private fun OnboardingPageIris() {
         Text("Conoce a IRIS", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
         Spacer(Modifier.height(12.dp))
         Text(
-            "IRIS es tu guía. Te acompaña en cada misión, celebra tus avances y te da pistas cuando las necesitas.",
+            "IRIS es tu compañera de casos. Te avisa cuándo hay una pista nueva, te dice exactamente qué tocar y celebra contigo cada caso resuelto.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
@@ -144,18 +146,24 @@ private fun OnboardingPageIris() {
 
 @Composable
 private fun OnboardingPageMethod() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text("Piensa como científico", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
-        Spacer(Modifier.height(12.dp))
-        Text(
-            "Observa, pregunta, crea hipótesis, experimenta y descubre. Cada misión sigue el método científico, paso a paso.",
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-        )
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Spacer(Modifier.height(8.dp))
+        Text("Así se juega un caso", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        Spacer(Modifier.height(16.dp))
+        HowToPlayRow("🔍", "Toca la escena y encuentra la pista escondida.")
+        HowToPlayRow("🤔", "Elige la sospecha que más sentido te haga.")
+        HowToPlayRow("🕵️", "Sigue tu corazonada: no hay respuestas malas.")
+        HowToPlayRow("🧩", "Resuelve un reto rápido (tocar, ordenar, adivinar).")
+        HowToPlayRow("🎉", "¡Caso resuelto! Se guarda en tu archivo.")
+    }
+}
+
+@Composable
+private fun HowToPlayRow(emoji: String, text: String) {
+    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(emoji, style = MaterialTheme.typography.headlineSmall)
+        Spacer(Modifier.width(12.dp))
+        Text(text, style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -178,7 +186,7 @@ private fun OnboardingPageProfile(
         OutlinedTextField(
             value = alias,
             onValueChange = onAliasChange,
-            label = { Text("Tu alias de investigador") },
+            label = { Text("Tu alias de detective") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )

@@ -63,7 +63,7 @@ private fun zoneLabel(zone: Zone) = when (zone) {
     Zone.BIODESCUBRIMIENTO -> "Bosque y Costa Salvaje"
     Zone.PLANETA_TIERRA -> "Expedición al Planeta"
     Zone.CENTRO_DE_DATOS -> "Observatorio de Pistas"
-    Zone.MUSEO_CIENTIFICO -> "Museo Científico"
+    Zone.MUSEO_CIENTIFICO -> "Archivo de Casos"
 }
 
 private fun zoneTagline(zone: Zone) = when (zone) {
@@ -101,13 +101,13 @@ fun HomeScreen(
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    state.profile?.alias ?: "Investigador",
+                    state.profile?.alias ?: "Detective",
                     style = MaterialTheme.typography.titleLarge,
                 )
                 XpBar(levelName = state.levelName, progressPercent = state.levelProgressPercent)
             }
             IconButton(onClick = onJournalClick) {
-                Icon(Icons.Filled.AutoStories, contentDescription = "Notas del explorador")
+                Icon(Icons.Filled.AutoStories, contentDescription = "Cuaderno de pistas")
             }
             IconButton(onClick = onSettingsClick) {
                 Icon(Icons.Filled.Settings, contentDescription = "Ajustes")
@@ -115,7 +115,7 @@ fun HomeScreen(
         }
 
         IrisMessageBubble(
-            message = "¡Qué bueno verte! ¿A dónde exploramos hoy?",
+            message = "¿Qué caso resolvemos hoy? 🕵️",
             expression = IrisExpression.FELIZ,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
@@ -171,14 +171,14 @@ private fun ZoneMapCard(
                     )
                     if (unlocked) {
                         Text(
-                            "$completed de $total descubrimientos",
+                            "$completed de $total casos resueltos",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         )
                     }
                 } else {
                     Text(
-                        "Tus descubrimientos e insignias",
+                        "Tus casos resueltos e insignias",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     )

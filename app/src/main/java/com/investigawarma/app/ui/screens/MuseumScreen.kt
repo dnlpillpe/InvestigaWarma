@@ -50,7 +50,7 @@ fun MuseumScreen(factory: ViewModelFactory, onBack: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás") }
-            Text("Museo Científico", style = MaterialTheme.typography.titleLarge)
+            Text("Archivo de Casos", style = MaterialTheme.typography.titleLarge)
         }
 
         LazyVerticalGrid(
@@ -61,7 +61,7 @@ fun MuseumScreen(factory: ViewModelFactory, onBack: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
-                SectionHeader(title = "Lo que descubrí", subtitle = "${items.count { it.unlockedAt != null }} de ${items.size} hallazgos")
+                SectionHeader(title = "Expedientes cerrados", subtitle = "${items.count { it.unlockedAt != null }} de ${items.size} hallazgos")
             }
             items(items) { item ->
                 val unlocked = item.unlockedAt != null

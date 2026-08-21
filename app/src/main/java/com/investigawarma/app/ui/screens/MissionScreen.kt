@@ -159,7 +159,7 @@ private fun MissionNavBar(
             Spacer(Modifier.width(12.dp))
         }
         PrimaryButton(
-            text = if (state.stepIndex == state.steps.size - 1) "Descubrir" else "Continuar",
+            text = if (state.stepIndex == state.steps.size - 1) "Resolver caso" else "Continuar",
             onClick = onNext,
             enabled = canAdvance,
             modifier = Modifier.weight(1f),
@@ -216,7 +216,7 @@ private fun ObserveStep(mission: ScientificMissionEntity, promptText: String) {
         }
         Spacer(Modifier.height(12.dp))
         Text(
-            if (revealed) promptText else "Toca la escena para explorarla.",
+            if (revealed) promptText else "Toca la escena para encontrar la pista.",
             style = MaterialTheme.typography.bodyLarge,
         )
     }

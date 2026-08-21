@@ -70,7 +70,7 @@ fun JournalScreen(factory: ViewModelFactory, onBack: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = "Atrás") }
-            Text("Notas del Explorador", style = MaterialTheme.typography.titleLarge)
+            Text("Cuaderno de Pistas", style = MaterialTheme.typography.titleLarge)
         }
 
         LazyColumn(modifier = Modifier.weight(1f), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {

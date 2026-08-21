@@ -89,7 +89,7 @@ fun ZoneScreen(
                     }
                 }
             }
-            item { SectionHeader(title = "Por explorar", subtitle = "Sigue el camino y descubre qué hay más adelante") }
+            item { SectionHeader(title = "Casos por resolver", subtitle = "Sigue el camino y resuelve cada caso") }
             items(state.missions) { mwp ->
                 MissionRow(mwp, accentColor, onClick = { if (canPlay(mwp)) onMissionClick(mwp.mission.id) })
             }
@@ -167,11 +167,11 @@ private fun MissionRow(mwp: MissionWithProgress, accentColor: Color, onClick: ()
 private fun statusLabel(status: String, difficulty: Int): String {
     val diffLabel = "Dificultad ${"★".repeat(difficulty)}"
     return when (status) {
-        "LOCKED" -> "Bloqueada · $diffLabel"
-        "AVAILABLE" -> "Disponible · $diffLabel"
-        "STARTED" -> "En curso · $diffLabel"
-        "COMPLETED" -> "Completada · $diffLabel"
-        "MASTERED" -> "¡Dominada! · $diffLabel"
+        "LOCKED" -> "Bloqueado · $diffLabel"
+        "AVAILABLE" -> "Caso nuevo · $diffLabel"
+        "STARTED" -> "En investigación · $diffLabel"
+        "COMPLETED" -> "Caso resuelto · $diffLabel"
+        "MASTERED" -> "¡Caso resuelto a la perfección! · $diffLabel"
         else -> diffLabel
     }
 }
