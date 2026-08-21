@@ -2,7 +2,8 @@
 """
 Genera los iconos de lanzador PNG de InvestigaWarma para dispositivos con API < 26
 (que no soportan adaptive-icon). Dibuja el mismo concepto que los vector drawables
-de mipmap-anydpi-v26: "la lupa del joven investigador" sobre fondo degradado.
+de mipmap-anydpi-v26: "el pequeño detective" (cabeza con sombrero y lupa) sobre
+fondo degradado.
 
 Uso: python3 tools/generate_launcher_icons.py
 """
@@ -22,7 +23,11 @@ DEEP_SPACE = (15, 27, 60)
 LAB_VIOLET = (91, 63, 224)
 DISCOVERY_CYAN = (32, 211, 194)
 SPARK_AMBER = (255, 176, 32)
-MISSION_CORAL = (255, 107, 107)
+SKIN = (243, 199, 160)
+HAIR = (46, 26, 71)
+HAT_BRIM = (184, 118, 58)
+HAT_DOME = (193, 127, 69)
+HAT_BAND = (138, 90, 43)
 WHITE = (255, 255, 255)
 
 
@@ -48,28 +53,43 @@ def draw_icon(size: int) -> Image.Image:
     def s(v):
         return v * scale
 
-    # Mango
-    draw.line([(s(70), s(70)), (s(86), s(86))], fill=SPARK_AMBER + (255,), width=max(2, int(s(6))))
+    def circle(cx, cy, r, **kwargs):
+        draw.ellipse([s(cx - r), s(cy - r), s(cx + r), s(cy + r)], **kwargs)
 
-    # Aro
-    draw.ellipse([s(30), s(30), s(74), s(74)], outline=DISCOVERY_CYAN + (255,), width=max(2, int(s(5))))
+    def oval(cx, cy, rx, ry, **kwargs):
+        draw.ellipse([s(cx - rx), s(cy - ry), s(cx + rx), s(cy + ry)], **kwargs)
 
-    # Cristal
-    draw.ellipse([s(33), s(33), s(71), s(71)], fill=DEEP_SPACE + (180,))
+    # Mechones de cabello
+    circle(38, 52, 6, fill=HAIR + (255,))
+    circle(70, 52, 6, fill=HAIR + (255,))
 
-    # Estrella (simplificada como polígono)
-    cx, cy, r = s(52), s(52), s(11)
+    # Cabeza
+    circle(54, 60, 15, fill=SKIN + (255,))
+
+    # Ala y copa del sombrero
+    oval(54, 47, 20, 6, fill=HAT_BRIM + (255,))
+    oval(54, 39, 13, 11, fill=HAT_DOME + (255,))
+    oval(54, 45, 13, 2.5, fill=HAT_BAND + (255,))
+
+    # Ojos y sonrisa
+    circle(49, 59, 1.6, fill=HAIR + (255,))
+    circle(59, 59, 1.6, fill=HAIR + (255,))
+    draw.arc([s(48), s(63), s(60), s(73)], start=20, end=160, fill=HAIR + (255,), width=max(1, int(s(1.6))))
+
+    # Lupa: mango, aro y cristal
+    draw.line([(s(80), s(76)), (s(87), s(83))], fill=SPARK_AMBER + (255,), width=max(2, int(s(5.5))))
+    draw.ellipse([s(60), s(56), s(84), s(80)], outline=DISCOVERY_CYAN + (255,), width=max(2, int(s(4.5))))
+    circle(72, 68, 9.5, fill=DEEP_SPACE + (140,))
+
+    # Destello de descubrimiento en el cristal
+    cx, cy = s(72), s(68)
+    r_out, r_in = s(7), s(3)
     pts = []
-    for i in range(10):
-        ang = -math.pi / 2 + i * math.pi / 5
-        rad = r if i % 2 == 0 else r * 0.45
+    for i in range(8):
+        ang = -math.pi / 2 + i * math.pi / 4
+        rad = r_out if i % 2 == 0 else r_in
         pts.append((cx + rad * math.cos(ang), cy + rad * math.sin(ang)))
     draw.polygon(pts, fill=WHITE + (255,))
-
-    # Molécula
-    draw.ellipse([s(37), s(57), s(43), s(63)], fill=DISCOVERY_CYAN + (255,))
-    draw.ellipse([s(61), s(57), s(67), s(63)], fill=MISSION_CORAL + (255,))
-    draw.line([(s(40), s(60)), (s(64), s(60))], fill=WHITE + (255,), width=max(1, int(s(1.5))))
 
     return img
 
